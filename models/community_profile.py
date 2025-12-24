@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, func
-from sqlalchemy.orm import foreign
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, func, ForeignKey
+from sqlalchemy.orm import foreign, relationship
 
 from database import Base
 
@@ -11,17 +11,20 @@ class CommunityProfile(Base):
                 index=True)
 
     user_id = Column(Integer,
-                     nullable=False,
-                     foreign_key='user.id')
+                     ForeignKey('user.id',
+                                 ondelete='CASCADE'),
+                     nullable=False)
 
     community_id = Column(Integer,
-                          nullable=False,
-                          foreign_key='community.id')
+                        ForeignKey('community.id',
+                                 ondelete='CASCADE'),
+                        nullable=False)
 
     profile_name = Column(String,
-                          unique=True,
                           index=True,
                           nullable=False)
+
+    display_name = Column(String)
 
     bio = Column(String,
                  nullable=True)
@@ -29,9 +32,12 @@ class CommunityProfile(Base):
     is_active = Column(Boolean,
                        default=True)
 
-    created_at = Column(DateTime(timezone=True),
+    joined_at = Column(DateTime(timezone=True),
                         server_default=func.now(),
                         nullable=False)
     updated_at = Column(DateTime(timezone=True),
                         server_default=func.now(),
                         onupdate=func.now())
+
+    user = relationship("User", back_populates="community_profiles")
+    community = relationship("Community", back_populates="profiles")

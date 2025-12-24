@@ -23,3 +23,6 @@ class User(Base):
     updated_at = Column(DateTime(timezone=True),
                         server_default=func.now(),
                         onupdate=func.now())
+
+    owned_communities = relationship("Community", back_populates="owner", foreign_keys="Community.owner_id")
+    community_profiles = relationship("CommunityProfile", back_populates="user")
