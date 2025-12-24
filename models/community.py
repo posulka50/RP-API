@@ -19,7 +19,7 @@ class Community(Base):
                          nullable=True)
 
     owner_id = Column(Integer,
-                      ForeignKey('community_profile.id',
+                      ForeignKey('user.id',
                                  ondelete='CASCADE'),
                       nullable=False,)
 
@@ -33,5 +33,10 @@ class Community(Base):
                         server_default=func.now(),
                         onupdate=func.now())
 
-    owner = relationship("User", back_populates="owned_communities", foreign_keys=[owner_id])
-    profiles = relationship("CommunityProfile", back_populates="community")
+    owner = relationship("User",
+                         back_populates="owned_communities",
+                         foreign_keys=[owner_id])
+
+    profiles = relationship("CommunityProfile",
+                            back_populates="community",
+                            cascade="all, delete-orphan")

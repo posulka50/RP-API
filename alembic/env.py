@@ -8,6 +8,8 @@ from alembic import context
 from config import settings
 from database import Base
 from models.user import User
+from models.community import Community
+from models.community_profile import CommunityProfile
 
 config = context.config
 

@@ -1,7 +1,15 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, func, ForeignKey
-from sqlalchemy.orm import foreign, relationship
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, func, ForeignKey, UniqueConstraint, Index
+from sqlalchemy.orm import relationship
+from enum import Enum as PyEnum
+from sqlalchemy import Enum
 
 from database import Base
+
+class CommunityRole(str, PyEnum):
+    OWNER = "owner"
+    ADMIN = "admin"
+    MODERATOR = "moderator"
+    MEMBER = "member"
 
 class CommunityProfile(Base):
     __tablename__ = 'community_profile'
@@ -24,7 +32,9 @@ class CommunityProfile(Base):
                           index=True,
                           nullable=False)
 
-    display_name = Column(String)
+    role = Column(Enum(CommunityRole),
+                  default=CommunityRole.MEMBER,
+                  nullable=False)
 
     bio = Column(String,
                  nullable=True)
@@ -41,3 +51,9 @@ class CommunityProfile(Base):
 
     user = relationship("User", back_populates="community_profiles")
     community = relationship("Community", back_populates="profiles")
+
+    __table_args__ = (
+        UniqueConstraint('user_id', 'community_id', name='uq_user_community'),
+        UniqueConstraint('community_id', 'profile_name', name='uq_community_profile_name'),
+        Index('ix_community_profile_community_id', 'community_id'),
+    )
