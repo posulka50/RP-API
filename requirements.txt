@@ -1,3 +1,5 @@
+uliweb-alembic
+pyjwt
 fastapi
 uvicorn[standard]
 sqlalchemy
